@@ -82,13 +82,41 @@ public class ProdutosDAO {
                     st.close();
                     JOptionPane.showMessageDialog(null, "Produto vendido!");
                 }else if(id == p.getId()){
-                    JOptionPane.showMessageDialog(null, "Produto ja estava vendido");
+                    JOptionPane.showMessageDialog(null, "Produto ja esta vendido");
                 }
             }
             conn.close();
         }catch(SQLException e){
             JOptionPane.showMessageDialog(null, "Erro ao vender produto: "+e.getMessage());
         }
-    }       
+    }   
+
+    public ArrayList<ProdutosDTO> listarProdutosVendidos(){
+        
+        ResultSet rs;
+        PreparedStatement st;
+        conn = new conectaDAO().connectDB();
+        try{
+           st = conn.prepareStatement("select * from produtos where status = 'Vendido'");
+           rs = st.executeQuery();
+           
+           while(rs.next()){
+               ProdutosDTO p = new ProdutosDTO();
+               
+               p.setId(rs.getInt("id"));
+               p.setNome(rs.getString("nome"));
+               p.setValor(rs.getInt("valor"));
+               p.setStatus(rs.getString("status"));
+               
+               listagem.add(p);
+           }
+           rs.close();
+           st.close();
+           conn.close();
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(null, "Erro ao buscar: " + e.getMessage());
+        }
+        return listagem;
+    }    
 }
 
